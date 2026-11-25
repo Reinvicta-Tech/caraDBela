@@ -1,4 +1,4 @@
-import { azulejo, cara, humor, icone, MAIS, marcasDe, mini, motivo, pecas, rotuloHora, tira, traco } from './azulejo.js';
+import { azulejo, cara, humor, humorRede, icone, MAIS, marcasDe, mini, motivo, pecas, rotuloHora, tira, traco } from './azulejo.js';
 import { api, avisar, botao, campo, confirmar, CONFIANCA, dataHora, dialogo, EVENTOS, formulario, h, haQuanto, presente, sev, tabela, vigia } from './util.js';
 
 const DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -85,7 +85,7 @@ export async function inicio(ctx) {
     h('section', { class: 'cresce coluna', 'aria-label': 'Dispositivos' },
       topo(n ? `${NUMEROS[n] || n} ${n === 1 ? 'coisa' : 'coisas'} para veres` : dispositivos.every(porLigar) ? 'Sem eventos para vigiar' : 'Está tudo calmo', procurarNaRede(ctx.recarregar)),
       h('div', { class: 'parede' }, botoes,
-        h('div', { class: 'azulejo z-cara', role: 'img', 'aria-label': { calma: 'A CaraDBela pisca o olho', atenta: 'A CaraDBela está atenta', aflita: 'A CaraDBela está aflita' }[humor(alertas)] }, cara(humor(alertas))),
+        h('div', { class: 'azulejo z-cara', role: 'img', 'aria-label': { calma: 'A CaraDBela pisca o olho', atenta: 'A CaraDBela está atenta', aflita: 'A CaraDBela está aflita' }[humorRede(alertas)] }, cara(humorRede(alertas))),
         h('a', { class: 'azulejo z-mais', href: paginaNovo() }, traco(MAIS), h('strong', null, 'Adicionar à mão'))),
       h('p', { class: 'suave' }, `${dispositivos.filter(presente).length} de ${dispositivos.length} presentes. Com padrão: confiável. Azul vivo: isolado. Sem padrão: por classificar. Desbotado: ausente.`)),
     painel);

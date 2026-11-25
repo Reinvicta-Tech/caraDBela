@@ -35,8 +35,10 @@ export const motivo = () => s('svg', { class: 'motivo', viewBox: '0 0 200 200', 
   CANTOS.map(([cx, cy]) => [s('circle', { class: 'aro', cx, cy, r: 44 }), s('circle', { class: 'miolo', cx, cy, r: 30 })]));
 
 export const MUITOS = 5;
-/** calma sem alertas; atenta com poucos e médios; aflita com algum alto ou crítico, ou com muitos. */
-export const humor = (alertas) => (!alertas.length ? 'calma' : alertas.length >= MUITOS || alertas.some((a) => ['alta', 'critica'].includes(a.severity)) ? 'aflita' : 'atenta');
+/** A cara de um dispositivo: calma sem alertas, atenta com médios, aflita com algum alto ou crítico. */
+export const humor = (alertas) => (!alertas.length ? 'calma' : alertas.some((a) => ['alta', 'critica'].includes(a.severity)) ? 'aflita' : 'atenta');
+/** A cara da parede resume a rede: só conta quantos alertas há. */
+export const humorRede = (alertas) => (!alertas.length ? 'calma' : alertas.length >= MUITOS ? 'aflita' : 'atenta');
 export const cara = (como = 'calma') => h('img', { class: 'cara', src: `img/caradbela-selo${como === 'calma' ? '' : `-${como}`}.svg`, alt: '', width: 256, height: 256 });
 
 /** Junta cada dispositivo aos seus alertas e decide que azulejo é. */

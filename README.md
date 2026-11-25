@@ -36,8 +36,8 @@ Cada dispositivo é um azulejo numa parede. A cor e o padrão dizem em que estad
   </tr>
   <tr>
     <td align="center"><b>Calma</b><br>Sem alertas</td>
-    <td align="center"><b>Atenta</b><br>Até quatro alertas médios</td>
-    <td align="center"><b>Aflita</b><br>Algum alto ou crítico, ou cinco ou mais</td>
+    <td align="center"><b>Atenta</b><br>Entre um e quatro alertas</td>
+    <td align="center"><b>Aflita</b><br>Cinco alertas ou mais</td>
   </tr>
 </table>
 
