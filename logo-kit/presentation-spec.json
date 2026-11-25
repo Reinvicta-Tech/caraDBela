@@ -1,0 +1,55 @@
+{
+  "brand": "CaraDBela",
+  "tagline": "A tua IoT de forma Bela",
+  "brief": "Vigia os dispositivos IoT da rede e avisa dos acessos suspeitos. Refresh fiel: a mesma cara que pisca o olho, com a Cruz de Cristo, o cabelo em ondas e a boca em D, agora em geometria exata.",
+  "adjectives": [
+    "bela",
+    "portuguesa",
+    "vigilante",
+    "bem-disposta"
+  ],
+  "criteria": "Reconhecível como a mesma marca, vetor puro, legível a 16 px, funciona a uma cor e em fundo escuro.",
+  "mockups": [
+    "website",
+    "favicon-tab",
+    "app-icon",
+    "sticker",
+    "tshirt",
+    "readme"
+  ],
+  "nav": [
+    "A tua rede",
+    "Alertas",
+    "Segurança"
+  ],
+  "brand_color": "#2672D6",
+  "tile_color": "#FFFFFF",
+  "greyscale": false,
+  "final": true,
+  "designer": "CaraDBela",
+  "concepts": [
+    {
+      "name": "Refresh fiel",
+      "symbol": "caradbela-symbol-color.svg",
+      "lockup": "caradbela-horizontal-color.svg",
+      "stacked": "caradbela-stacked-color.svg",
+      "symbol_on_tile": "caradbela-symbol-color.svg",
+      "stacked_on_tile": "caradbela-stacked-color.svg",
+      "symbol_on_dark": "caradbela-symbol-white.svg",
+      "lockup_on_dark": "caradbela-horizontal-reversed.svg",
+      "stacked_on_dark": "caradbela-stacked-white.svg",
+      "idea": "Uma cara bela que vigia a rede e pisca o olho.",
+      "rationale": [
+        "A boca é um D, o D do nome",
+        "Um aro, ondas em arcos exatos e a cruz como coroa",
+        "Versão pequena com a mesma cara e ondas mais grossas"
+      ]
+    }
+  ],
+  "recommendation": "Usar o horizontal no digital, o empilhado em formatos quadrados e a versão pequena abaixo de 48 px.",
+  "next_steps": [
+    "Pesquisa de marca registada (INPI/EUIPO)",
+    "Prova de cor antes de imprimir",
+    "Substituir o logo antigo em todo o lado no mesmo dia"
+  ]
+}
