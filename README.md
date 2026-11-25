@@ -26,7 +26,20 @@ Vigia os dispositivos inteligentes da tua rede, deteta acessos suspeitos e avisa
 
 Uma câmara acedida fora de horas. Uma fechadura com catorze tentativas falhadas vindas do mesmo endereço. Um equipamento que ninguém conhece ligado à rede. A CaraDBela regista estes acessos, reconhece os padrões suspeitos e explica-os em português claro.
 
-Cada dispositivo é um azulejo numa parede. A cor e o padrão dizem em que estado está, e a CaraDBela **pisca o olho quando está tudo calmo, abre os dois quando há poucos alertas médios e fica aflita quando há algum alto ou crítico, ou cinco ou mais**.
+Cada dispositivo é um azulejo numa parede. A cor e o padrão dizem em que estado está, e a cara da CaraDBela mostra como está a rede:
+
+<table align="center">
+  <tr>
+    <td align="center" width="33%"><img src="public/img/caradbela-selo.svg" alt="Cara calma, a piscar o olho" width="130"></td>
+    <td align="center" width="33%"><img src="public/img/caradbela-selo-atenta.svg" alt="Cara atenta, de olhos abertos" width="130"></td>
+    <td align="center" width="33%"><img src="public/img/caradbela-selo-aflita.svg" alt="Cara aflita, de olhos apertados e boca em ziguezague" width="130"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Calma</b><br>Sem alertas</td>
+    <td align="center"><b>Atenta</b><br>Até quatro alertas médios</td>
+    <td align="center"><b>Aflita</b><br>Algum alto ou crítico, ou cinco ou mais</td>
+  </tr>
+</table>
 
 - **Casa:** todos os dispositivos de relance, com os alertas primeiro.
 - **Diário:** as últimas 24 horas de cada dispositivo, hora a hora.
@@ -177,7 +190,7 @@ curl -X POST http://SERVIDOR:3000/api/receber \
 - [x] Nova interface e identidade visual
 - [ ] Implementação no mundo real
 
-Ainda por testar: o firmware num ESP32, a análise com nmap, o Docker e a migração de uma base de dados real da versão 1.
+Ainda por testar: a ligação de routers, Linux, ESP32 e Home Assistant com equipamentos reais, as palavras-passe erradas na vigia para Windows, o firmware num ESP32, a análise com nmap, o Docker e a migração de uma base de dados real da versão 1.
 
 ## Contribuir
 
