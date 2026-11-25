@@ -1,15 +1,16 @@
 import { cara, parede, traco } from './azulejo.js';
+import { esquecerChaves, ligar } from './ligar.js';
 import { api, avisar, campo, formulario, h } from './util.js';
 import * as vistas from './vistas.js';
 
 const PAGINAS = {
   '': ['Casa', vistas.inicio], diario: ['Diário', vistas.diario], alertas: ['Alertas', vistas.alertas], seguranca: ['Segurança', vistas.seguranca],
-  administracao: ['Administração', vistas.administracao, true], dispositivo: ['Dispositivo', vistas.dispositivo], conta: ['A tua conta', vistas.conta],
+  administracao: ['Administração', vistas.administracao, true], dispositivo: ['Dispositivo', vistas.dispositivo], conta: ['A tua conta', vistas.conta], ligar: ['Ligar', ligar],
 };
 const ANTIGAS = { dispositivos: '', eventos: 'diario' };
 // Que páginas reagem a cada mudança recebida em direto.
 const AO_VIVO = {
-  alerta: ['', 'alertas', 'diario'], 'alerta-resolvido': ['', 'alertas', 'diario'], evento: ['', 'diario'], rede: [''], analise: ['seguranca'],
+  alerta: ['', 'alertas', 'diario'], 'alerta-resolvido': ['', 'alertas', 'diario'], evento: ['', 'diario'], vigia: ['', 'diario'], rede: [''], analise: ['seguranca'],
 };
 const raiz = document.getElementById('app');
 let eu = null;
@@ -68,6 +69,7 @@ function ligarDireto() {
   direto = new EventSource('/api/direto');
   direto.onmessage = (m) => {
     const d = JSON.parse(m.data);
+    if (['evento', 'vigia'].includes(d.tipo)) window.dispatchEvent(new Event('evento-recebido'));
     if (d.tipo === 'alerta' && d.severity !== 'media') avisar(d.title, true);
     if (AO_VIVO[d.tipo]?.includes(rota().caminho)) atualizarEmBreve();
     else contarAlertas().catch(() => {});
@@ -101,6 +103,7 @@ async function sair() {
 }
 
 async function porto() {
+  esquecerChaves();
   eu = null;
   principal = null;
   pedido++;
@@ -126,7 +129,7 @@ async function porto() {
       formulario({ campos: [campo('Código de instalação', h('input', { name: 'codigo', required: true, autocomplete: 'off' })), nome(), passe(true)], acao: 'Criar administrador', enviar: enviar('instalar') }));
   }
   if (estado.instalar) instalar(); else entrar();
-  raiz.replaceChildren(h('main', { class: 'porto' }, h('div', { class: 'mar' }, parede(), cara(false)), cais));
+  raiz.replaceChildren(h('main', { class: 'porto' }, h('div', { class: 'mar' }, parede(), cara()), cais));
 }
 
 window.addEventListener('hashchange', () => { fecharMenu(); mostrar(); window.scrollTo(0, 0); });

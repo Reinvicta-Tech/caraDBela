@@ -135,6 +135,11 @@ guardar('caradbela-horizontal-reversed.svg',svg((0,0,256+NW*1.25+40,256),f'<circ
 # Expressão atenta: só para a interface, quando há alertas
 at=cruz(128,46,38,11,25,20,4)+circ(104,163,12)+circ(152,163,12)+rect(108,192,40,9)
 guardar('caradbela-selo-atenta.svg',svg((0,0,256,256),disco+grp(pt(a,AZUL)+pt(at,VERM),128-128*.82,128-129*.82,.82)))
+# Expressão aflita: olhos apertados e boca em ziguezague, para alertas graves ou muitos
+af=(cruz(128,46,38,11,25,20,4)
+  +'M90 147 L118 163 L90 179 L90 168 L99 163 L90 158Z'+'M166 147 L138 163 L166 179 L166 168 L157 163 L166 158Z'
+  +'M92 203 L110 187 L128 203 L146 187 L164 203 L164 217 L146 201 L128 217 L110 201 L92 217Z')
+guardar('caradbela-selo-aflita.svg',svg((0,0,256,256),disco+grp(pt(a,AZUL)+pt(af,VERM),128-128*.82,128-129*.82,.82)))
 # Ícone de aplicação: o símbolo completo, a cores, em azulejo branco
 def icone(n,rx): guardar(n,svg((0,0,256,256),f'<rect width="256" height="256" rx="{rx}" fill="#FFFFFF"/>'+grp(pt(a,AZUL)+pt(v,VERM),128-128*.9,128-129*.9,.9)))
 icone('caradbela-app-icon.svg',56)

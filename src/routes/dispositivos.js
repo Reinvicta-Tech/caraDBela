@@ -78,13 +78,14 @@ export function rotasDispositivos() {
     const chave = `cdb_${randomBytes(24).toString('hex')}`;
     d.keyHash = resumoChave(chave);
     d.hasKey = true;
+    d.set({ watchedAt: undefined, watchesLogins: undefined, eventAt: undefined });
     await d.save();
     res.status(201).json({ chave });
   });
 
   r.delete('/:id/chave', async (req, res) => {
     const d = await meu(req);
-    await Device.updateOne({ _id: d._id }, { $unset: { keyHash: '' }, $set: { hasKey: false } });
+    await Device.updateOne({ _id: d._id }, { $unset: { keyHash: '', watchedAt: '', watchesLogins: '', eventAt: '' }, $set: { hasKey: false } });
     res.status(204).end();
   });
   return r;

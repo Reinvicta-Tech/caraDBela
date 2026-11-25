@@ -8,7 +8,7 @@ import { Alert, Device, Event, ScanLog } from '../models/index.js';
 import { avisar, canal, registarAlerta } from '../services/alertas.js';
 import { avaliar, JANELA_MS } from '../services/detecao.js';
 import { atualizarPresenca } from '../services/monitor.js';
-import { analisarRede, normalizarMac } from '../services/rede.js';
+import { analisarRede, interfaceLocal, normalizarMac } from '../services/rede.js';
 import { analisarDispositivo } from '../services/seguranca.js';
 import { resumoChave } from './dispositivos.js';
 
@@ -41,11 +41,21 @@ export function rotasReceber() {
     const at = new Date();
     const recentes = await Event.find({ deviceId: d._id, at: { $gte: new Date(at - JANELA_MS) } }).sort({ at: -1 }).limit(500).lean();
     const evento = await Event.create({ userId: d.userId, deviceId: d._id, kind: tipo, sourceIp: origemIp, sourceMac: normalizarMac(origemMac) || undefined, detail: detalhe, at });
-    await Device.updateOne({ _id: d._id }, { lastSeenAt: at });
-    const alertas = avaliar({ evento, dispositivo: d, recentes, fuso: config.fuso });
+    const teste = detalhe === 'Teste';
+    await Device.updateOne({ _id: d._id }, { lastSeenAt: at, ...(teste ? {} : { eventAt: at }) });
+    const alertas = teste ? [] : avaliar({ evento, dispositivo: d, recentes, fuso: config.fuso });
     for (const a of alertas) await registarAlerta(d.userId, d._id, a);
     avisar(d.userId, 'evento');
     res.status(202).json({ alertas: alertas.length });
+  });
+
+  // Sinal de vida: distingue "não aconteceu nada" de "ninguém está a ver".
+  r.post('/vivo', limite, comChave, validar(z.object({ falhas: z.boolean().default(false) })), async (req, res) => {
+    const d = req.device;
+    const agora = new Date();
+    await Device.updateOne({ _id: d._id }, { lastSeenAt: agora, watchedAt: agora, watchesLogins: req.dados.falhas });
+    if (!d.watchedAt || agora - d.watchedAt > 3 * 60_000) avisar(d.userId, 'vigia');
+    res.status(204).end();
   });
   return r;
 }
@@ -102,6 +112,13 @@ export function rotasVigilancia() {
       horas: horas.map((total, i) => ({ hora: new Date(inicio + i * HORA), total })),
       porDispositivo,
     });
+  });
+
+  // Para o guia de ligação mostrar um endereço que os dispositivos alcancem.
+  r.get('/servidor', async (_req, res) => {
+    const soLocal = ['127.0.0.1', '::1', 'localhost'].includes(config.host);
+    const ip = soLocal ? null : ['0.0.0.0', '::'].includes(config.host) ? (await interfaceLocal())?.address : config.host;
+    res.json({ soLocal, endereco: ip ? `http://${ip.includes(':') ? `[${ip}]` : ip}:${config.porta}` : null });
   });
 
   r.get('/analises', async (req, res) => {

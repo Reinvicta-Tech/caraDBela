@@ -89,12 +89,43 @@ test('dispositivos: validação, isolamento entre utilizadores e chave escondida
   assert.ok(!('keyHash' in p.dados));
 });
 
+test('o guia sabe se outros equipamentos alcançam o servidor', async () => {
+  assert.equal((await cliente()('GET', '/servidor')).status, 401);
+  const antes = config.host;
+  config.host = '127.0.0.1';
+  assert.deepEqual((await admin('GET', '/servidor')).dados, { soLocal: true, endereco: null });
+  config.host = '192.168.1.10';
+  assert.deepEqual((await admin('GET', '/servidor')).dados, { soLocal: false, endereco: `http://192.168.1.10:${config.porta}` });
+  config.host = antes;
+});
+
+test('um evento de teste não conta como vigia', async () => {
+  const d = (await admin('POST', '/dispositivos', { name: 'Teste', ip: '192.168.1.77' })).dados;
+  const k = (await admin('POST', `/dispositivos/${d._id}/chave`)).dados.chave;
+  const enviar = (corpo) => cliente()('POST', '/receber', corpo, { authorization: `Bearer ${k}`, 'x-caradbela': '' });
+  const estado = async () => (await admin('GET', '/dispositivos')).dados.find((x) => x._id === d._id);
+  for (let i = 0; i < 6; i++) assert.equal((await enviar({ tipo: 'login_falhado', detalhe: 'Teste' })).dados.alertas, 0);
+  assert.equal((await estado()).eventAt, undefined);
+  await enviar({ tipo: 'acesso' });
+  assert.ok((await estado()).eventAt);
+  await admin('POST', `/dispositivos/${d._id}/chave`);
+  assert.equal((await estado()).eventAt, undefined, 'com chave nova, ainda nada está ligado');
+  assert.equal((await admin('DELETE', `/dispositivos/${d._id}`)).status, 204);
+});
+
 test('eventos geram alertas agrupados e visíveis só para o dono', async () => {
   const enviar = (corpo, k = chave) => cliente()('POST', '/receber', corpo, { authorization: `Bearer ${k}`, 'x-caradbela': '' });
   assert.equal((await enviar({ tipo: 'acesso' }, `cdb_${'0'.repeat(48)}`)).status, 401);
   assert.equal((await enviar({ tipo: 'inventado' })).status, 400);
   for (let i = 0; i < 7; i++) assert.equal((await enviar({ tipo: 'login_falhado', origemIp: '192.168.1.99' })).status, 202);
   assert.equal((await enviar({ tipo: 'login_ok', origemIp: '192.168.1.99' })).dados.alertas, 1);
+  const estado = async () => (await admin('GET', '/dispositivos')).dados.find((d) => d._id === id);
+  const vivo = (k, corpo) => cliente()('POST', '/receber/vivo', corpo, { authorization: `Bearer ${k}`, 'x-caradbela': '' });
+  assert.equal((await vivo(`cdb_${'0'.repeat(48)}`, {})).status, 401);
+  assert.equal((await vivo(chave, { falhas: 'sim' })).status, 400);
+  assert.equal((await estado()).watchedAt, undefined);
+  assert.equal((await vivo(chave, { falhas: true })).status, 204);
+  assert.ok((await estado()).watchedAt && (await estado()).watchesLogins);
   const alertas = (await admin('GET', '/alertas')).dados;
   assert.deepEqual(alertas.map((a) => [a.rule, a.count]).sort(), [['forca_bruta', 3], ['intrusao', 1]]);
   assert.equal((await ana('GET', '/alertas')).dados.length, 0);

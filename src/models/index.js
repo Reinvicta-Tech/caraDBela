@@ -35,6 +35,9 @@ const deviceSchema = new Schema({
   },
   keyHash: { type: String, select: false },
   hasKey: { type: Boolean, default: false },
+  watchedAt: Date, // último sinal de vida de uma vigia
+  watchesLogins: Boolean,
+  eventAt: Date, // último evento a sério (não de teste)
   addedAt: { type: Date, default: Date.now },
   lastSeenAt: Date,
 });

@@ -38,6 +38,8 @@ for (let h = 0; h < 24; h++) {
 }
 for (let i = 0; i < 14; i++) eventos.push({ userId: user._id, deviceId: d.Fechadura._id, kind: 'login_falhado', sourceIp: '203.0.113.24', at: min(20 + i / 2) });
 await Event.insertMany(eventos);
+await Device.updateMany({ _id: { $in: criados.slice(0, 7).map((x) => x._id) } }, { hasKey: true, eventAt: min(5) });
+await Device.updateOne({ _id: d.Portátil._id }, { watchedAt: min(0), watchesLogins: false });
 
 const alerta = (nome, rule, severity, title, detail, count, m) => ({
   userId: user._id, deviceId: nome ? d[nome]._id : null, rule, severity, title, detail, count,
