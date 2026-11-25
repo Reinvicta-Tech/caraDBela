@@ -1,0 +1,9 @@
+# Só a base de dados. A aplicação corre fora do Docker porque precisa de ver a rede local.
+services:
+  mongo:
+    image: mongo:8
+    restart: unless-stopped
+    ports: ["127.0.0.1:27017:27017"]
+    volumes: [dados:/data/db]
+volumes:
+  dados:

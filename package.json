@@ -1,0 +1,34 @@
+{
+  "name": "caradbela",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Monitorização de acessos suspeitos a dispositivos IoT na rede local",
+  "type": "module",
+  "engines": {
+    "node": ">=24.2"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "local": "node scripts/local.js",
+    "demo": "node scripts/demo.js",
+    "migrar": "node scripts/migrar.js",
+    "palavra-passe": "node scripts/palavra-passe.js",
+    "test": "node --test \"tests/*.test.js\""
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.5",
+    "fast-xml-parser": "^5.12.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.13.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^11.4.0",
+    "playwright-core": "^1.65.1"
+  }
+}

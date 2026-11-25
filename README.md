@@ -1,196 +1,199 @@
-
-<a id="readme-top"></a>
-
-
-
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![project_license][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
-
-<!-- PROJECT LOGO -->
-
-<br />
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/19c6c2a8-463b-40ed-9c5b-6706e78d5cc2" alt="MiniLogo" width="190" height="190">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="logo-kit/caradbela-horizontal-reversed.svg">
+  <img src="logo-kit/caradbela-horizontal-color.svg" alt="CaraDBela" width="440">
+</picture>
+
+### A tua IoT de forma bela.
+
+Vigia os dispositivos inteligentes da tua rede, deteta acessos suspeitos e avisa-te.
+
+![Node.js 24.2+](https://img.shields.io/badge/Node.js-24.2%2B-2672D6?style=flat-square)
+![Express 5](https://img.shields.io/badge/Express-5-2672D6?style=flat-square)
+![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose_9-2672D6?style=flat-square)
+![ESP32](https://img.shields.io/badge/Firmware-ESP32-D62C26?style=flat-square)
+
+[Experimentar](#experimentar-em-dois-minutos) &nbsp;|&nbsp; [Instalar](#instalar) &nbsp;|&nbsp; [O que deteta](#o-que-deteta) &nbsp;|&nbsp; [API](#enviar-eventos) &nbsp;|&nbsp; [Segurança](#segurança)
+
+<br>
+
+<img src="docs/img/casa.png" alt="A Casa: cada dispositivo é um azulejo e o painel mostra o alerta da fechadura" width="920">
+
 </div>
 
+## O que é
 
+Uma câmara acedida fora de horas. Uma fechadura com catorze tentativas falhadas vindas do mesmo endereço. Um equipamento que ninguém conhece ligado à rede. A CaraDBela regista estes acessos, reconhece os padrões suspeitos e explica-os em português claro.
 
-<h3 align="center">CaraDBela</h3>
+Cada dispositivo é um azulejo numa parede. A cor e o padrão dizem em que estado está, e a CaraDBela **pisca o olho quando está tudo calmo e abre os dois quando há alertas**.
 
-  <p align="center">
-    A tua IoT de forma Bela
-    <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explora os sprints »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/github_username/repo_name">Relatório Final</a>
-    &middot;
-    <a href="https://github.com/github_username/repo_name/issues/new?labels=bug&template=bug-report---.md">Reporta um bug</a>
-    &middot;
-    <a href="https://github.com/github_username/repo_name/issues/new?labels=enhancement&template=feature-request---.md">Pede uma funcionalidade</a>
-  </p>
-</div>
+- **Casa:** todos os dispositivos de relance, com os alertas primeiro.
+- **Diário:** as últimas 24 horas de cada dispositivo, hora a hora.
+- **Alertas em direto:** agrupados por causa, sem repetições.
+- **Análise de segurança:** portas abertas e, com nmap, versões e vulnerabilidades conhecidas.
+- **Várias contas:** cada pessoa vê apenas os seus dispositivos. Os administradores gerem as contas.
+- **Sem serviços externos:** tipos de letra, imagens e código são servidos pelo teu computador.
+- **Telemóvel e modo escuro** incluídos.
 
+<table>
+  <tr>
+    <td width="50%"><img src="docs/img/diario.png" alt="O Diário, com a atividade de cada dispositivo por hora"></td>
+    <td width="50%"><img src="docs/img/dispositivo.png" alt="A página de um dispositivo"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Diário</b></td>
+    <td align="center"><b>Dispositivo</b></td>
+  </tr>
+</table>
 
-<!-- ABOUT THE PROJECT -->
-## Sobre o projeto
 <div align="center">
-<img src="https://github.com/davideferreira00/caraDBela/blob/main/design/BigLogoComSlogan.svg" alt="MiniLogo" width="360" height="360">
+  <img src="docs/img/telemovel.png" alt="A Casa no telemóvel" width="260">
+  &nbsp;&nbsp;
+  <img src="docs/img/telemovel-escuro.png" alt="A Casa no telemóvel, em modo escuro" width="260">
 </div>
 
-Somos uma base de dados modelar para dispositivos IoT que regista principalmente acessos suspeitos para monitorização, análise comportamental e resposta a incidentes de segurança, permitindo uma visão detalhada das interações com cada dispositivo na rede.
+## Experimentar em dois minutos
 
-<p align="right"><a href="#readme-top">↑</a></p>
+Precisas do [Node.js](https://nodejs.org) 24.2 ou mais recente. Não precisas de instalar o MongoDB.
 
+```sh
+git clone https://github.com/Reinvicta-Tech/caraDBela.git
+cd caraDBela
+npm install
+npm run demo
+```
 
+Abre <http://localhost:3000> e entra com `demo` / `demonstracao`. A base de dados é temporária e os dados são inventados.
 
-### Feito com (a definir)
+## Instalar
 
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+### Sem permissões de administrador
 
-<p align="right"><a href="#readme-top">↑</a></p>
+```sh
+npm run local
+```
 
+Descarrega e usa um MongoDB próprio, só acessível neste computador. Os dados ficam em `.dados/mongo`. Para fazer cópia de segurança, para o programa e copia essa pasta.
 
+### Com Docker ou MongoDB próprio
 
-<!-- GETTING STARTED -->
-## Como começar
+1. Arranca o MongoDB: `docker compose up -d`, ou instala-o à mão (ver `MongoDB Configuration/`).
+2. Copia `.env.example` para `.env` se quiseres mudar alguma coisa.
+3. Arranca o servidor: `npm start`
+4. Abre <http://localhost:3000> e cria o administrador com o código que aparece na consola.
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+### Opções úteis
 
-### Installation (a definir no futuro)
+| Para | Faz |
+|---|---|
+| Receber eventos de outros equipamentos | `HOST=0.0.0.0` (por omissão só responde ao próprio computador) |
+| Usar fora de uma rede de confiança | HTTPS num proxy e `COOKIE_SECURE=true` |
+| Vigiar a rede de tempos a tempos | `MONITOR_MINUTOS` |
+| Identificar versões na análise | Instalar o [nmap](https://nmap.org). Sem ele são verificadas 22 portas comuns |
+| Procurar vulnerabilidades conhecidas | `NMAP_VULNERS=true` (envia as versões encontradas para vulners.com) |
 
+<details>
+<summary><b>Vindo da versão 1</b></summary>
 
-<p align="right"><a href="#readme-top">↑</a></p>
+<br>
 
+Faz cópia de segurança (`mongodump`) e depois:
 
+```sh
+npm run migrar
+npm run palavra-passe -- admin
+```
 
-<!-- USAGE EXAMPLES -->
-## Utilização
+A migração normaliza os MAC, converte a whitelist em níveis de confiança e bloqueia a conta `admin` antiga, porque a palavra-passe dela estava publicada no repositório.
 
-Esta base de dados é útil porque permite monitorizar acessos suspeitos a dispositivos IoT em tempo real.
-Ajuda a identificar comportamentos fora do normal que podem indicar uma tentativa de intrusão.
+</details>
 
-Por exemplo, se uma câmara IP for acedida fora do horário habitual, o sistema regista o evento.
-Outro caso pode ser uma smart lock com várias tentativas de acesso falhadas, vindas de IPs desconhecidos.
+## O que deteta
 
-Com estes registos, é possível agir rapidamente e reforçar a segurança da rede antes que o ataque evolua.
+| Regra | Quando dispara | Gravidade |
+|---|---|---|
+| Possível intrusão | Entrada com sucesso depois de 5 falhas em 10 minutos | Crítica |
+| Tentativas repetidas | 5 falhas da mesma origem em 10 minutos | Alta |
+| Ligação recusada | O dispositivo recusou um equipamento | Alta |
+| Acesso vindo de fora | Origem fora da rede local | Média, ou alta se entrou |
+| Fora de horas | Acesso fora do horário do dispositivo | Média |
+| Atividade anormal | 60 eventos num minuto | Média |
+| Equipamento novo | MAC desconhecido na rede (com `MONITOR_MINUTOS`) | Média |
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+> [!IMPORTANT]
+> A confiança (confiável, isolado, por classificar) é uma classificação. A CaraDBela **avisa, mas não bloqueia tráfego**. Isso faz-se no router ou no ponto de acesso em `firmware/ap_guarda`.
 
-<p align="right"><a href="#readme-top">↑</a></p>
+## Enviar eventos
 
+Abre um dispositivo, cria a chave de eventos e:
 
+```sh
+curl -X POST http://SERVIDOR:3000/api/receber \
+  -H "Authorization: Bearer cdb_..." \
+  -H "Content-Type: application/json" \
+  -d '{"tipo":"login_falhado","origemIp":"192.168.1.50"}'
+```
 
-<!-- ROADMAP -->
-## Mapa MVP
+| Campo | Valores |
+|---|---|
+| `tipo` | `acesso`, `login_ok`, `login_falhado`, `nao_autorizado`, `ligacao` |
+| `origemIp`, `origemMac`, `detalhe` | Opcionais |
 
-- [ ] Criação da base de dados
-- [ ] Deteção de comportamentos suspeitos
-- [ ] Ligação da base de dados a dispositivos IoT
+## Segurança
+
+- Palavras-passe com bcrypt, sessão em cookie `HttpOnly` e `SameSite=Strict`, proteção CSRF.
+- Bloqueio progressivo após tentativas de entrada falhadas.
+- Chaves de dispositivo guardadas apenas como resumo SHA-256 e mostradas uma única vez.
+- Content Security Policy sem scripts nem estilos inline. Todo o texto é inserido como texto, nunca como HTML.
+- A análise só aceita alvos da rede local.
+
+> [!WARNING]
+> Analisa apenas redes tuas ou para as quais tens autorização.
+
+## Organização
+
+| Pasta | Conteúdo |
+|---|---|
+| `src/` | Servidor. As regras de deteção estão em `src/services/detecao.js` |
+| `public/` | Interface, sem dependências nem passo de compilação |
+| `firmware/` | Ponto de acesso ESP32 |
+| `scripts/` | Demonstração, modo local, migração e palavra-passe |
+| `tests/` | Testes (`npm test`) |
+| `logo-kit/` | Logo, ícones e guia de utilização |
+| `docs/` | Imagens desta página |
+| `design/`, `SPRINTS/`, `UML e Caso de uso/` | Documentação e desenhos do projeto original |
+| `legacy/codigo/` | A versão 1, só para consulta |
+
+## Estado do projeto
+
+- [x] Criação da base de dados
+- [x] Deteção de comportamentos suspeitos
+- [x] Ligação da base de dados a dispositivos IoT
+- [x] Nova interface e identidade visual
 - [ ] Implementação no mundo real
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+Ainda por testar: o firmware num ESP32, a análise com nmap, o Docker e a migração de uma base de dados real da versão 1.
 
-<p align="right"><a href="#readme-top">↑</a></p>
+## Contribuir
 
+Faz fork, cria um ramo, confirma que `npm test` passa e abre um pull request.
 
+## Equipa
 
-<!-- CONTRIBUTING -->
-## Contribuições
+Nasceu como projeto académico, em [davideferreira00/caraDBela](https://github.com/davideferreira00/caraDBela). Obrigado a todas as pessoas que o construíram:
 
+<a href="https://github.com/davideferreira00/caraDBela/graphs/contributors"><img src="https://contrib.rocks/image?repo=davideferreira00/caraDBela" alt="Pessoas que contribuíram"></a>
 
-Se tiveres uma sugestão que melhore este projeto, por favor faz um fork do repositório e cria um pull request. Também podes simplesmente abrir uma issue com a etiqueta "melhoria".
-Não te esqueças de dar uma estrela ao projeto! Obrigado novamente!
+## Licença
 
-1. Fork o repositório
-2. Cria um branch com a tua feature (`git checkout -b feature/FeatureFixe`)
-3. Faz commit ás alterações (`git commit -m 'Add some FeatureFixe'`)
-4. Faz push para a branch (`git push origin feature/FeatureFixe`)
-5. Abre uma pull request e nós iremos verificar!
+Não copies, não roubes, não espalhes. De resto é tranquilo, usa à vontade!
 
-<p align="right"><a href="#readme-top">↑</a></p>
+O tipo de letra Alegreya Sans tem licença própria, a [SIL Open Font License](public/fonts/OFL.txt).
 
-### Kiss the devs:
-
-<a href="https://github.com/davideferreira00/caraDBela/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=davideferreira00/caraDBela" />
-</a>
-
-<!-- LICENSE -->
-## Licensa
-
-Não copies, não roubes, não espalhes. De resto é tranquilo, usa á vontade!
-
-<p align="right"><a href="#readme-top">↑</a></p>
-
-
-
-<!-- CONTACT -->
-## Contactos
-
-CaraDBela - [@caraDBela](https://twitter.com) - professional@caradbela.com
-
-Link do repositório: [https://github.com/davideferreira00/caraDBela](https://github.com/github_username/repo_name)
-
-<p align="right"><a href="#readme-top">↑</a></p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
 ## Reconhecimentos
 
-- [ ] Nasa possivelmente 
+- [ ] Nasa possivelmente
 - [ ] A tua casa
 - [x] A minha mãe
 - [ ] ???
-
-<p align="right"><a href="#readme-top">↑</a></p>
-
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
