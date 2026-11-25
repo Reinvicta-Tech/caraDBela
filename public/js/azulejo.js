@@ -34,7 +34,10 @@ const CANTOS = [[0, 0], [200, 0], [0, 200], [200, 200]];
 export const motivo = () => s('svg', { class: 'motivo', viewBox: '0 0 200 200', 'aria-hidden': 'true' },
   CANTOS.map(([cx, cy]) => [s('circle', { class: 'aro', cx, cy, r: 44 }), s('circle', { class: 'miolo', cx, cy, r: 30 })]));
 
-export const cara = (atenta, classe = '') => h('img', { class: `cara ${classe}`, src: `img/caradbela-selo${atenta ? '-atenta' : ''}.svg`, alt: '', width: 256, height: 256 });
+export const MUITOS = 5;
+/** calma sem alertas; atenta com poucos e médios; aflita com algum alto ou crítico, ou com muitos. */
+export const humor = (alertas) => (!alertas.length ? 'calma' : alertas.length >= MUITOS || alertas.some((a) => ['alta', 'critica'].includes(a.severity)) ? 'aflita' : 'atenta');
+export const cara = (como = 'calma') => h('img', { class: 'cara', src: `img/caradbela-selo${como === 'calma' ? '' : `-${como}`}.svg`, alt: '', width: 256, height: 256 });
 
 /** Junta cada dispositivo aos seus alertas e decide que azulejo é. */
 export function pecas(dispositivos, alertas) {

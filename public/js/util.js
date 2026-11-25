@@ -98,6 +98,9 @@ export function haQuanto(data) {
 export const dataHora = (d) => new Date(d).toLocaleString('pt-PT', { dateStyle: 'short', timeStyle: 'short' });
 export const presente = (d) => Boolean(d.lastSeenAt) && Date.now() - new Date(d.lastSeenAt) < 15 * 60_000;
 
+/** 'ativa', 'parada' ou null quando não há nenhuma vigia instalada. */
+export const vigia = (d) => (!d.watchedAt ? null : Date.now() - new Date(d.watchedAt) < 3 * 60_000 ? 'ativa' : 'parada');
+
 export const CONFIANCA = { confiavel: 'Confiável', isolado: 'Isolado', desconhecido: 'Por classificar' };
 export const SEVERIDADE = { critica: 'Crítico', alta: 'Alto', media: 'Médio', baixa: 'Baixo' };
 export const EVENTOS = { acesso: 'Acesso', login_ok: 'Entrada com sucesso', login_falhado: 'Entrada falhada', nao_autorizado: 'Ligação recusada', ligacao: 'Ligação' };

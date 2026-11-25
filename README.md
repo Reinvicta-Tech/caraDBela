@@ -26,7 +26,7 @@ Vigia os dispositivos inteligentes da tua rede, deteta acessos suspeitos e avisa
 
 Uma câmara acedida fora de horas. Uma fechadura com catorze tentativas falhadas vindas do mesmo endereço. Um equipamento que ninguém conhece ligado à rede. A CaraDBela regista estes acessos, reconhece os padrões suspeitos e explica-os em português claro.
 
-Cada dispositivo é um azulejo numa parede. A cor e o padrão dizem em que estado está, e a CaraDBela **pisca o olho quando está tudo calmo e abre os dois quando há alertas**.
+Cada dispositivo é um azulejo numa parede. A cor e o padrão dizem em que estado está, e a CaraDBela **pisca o olho quando está tudo calmo, abre os dois quando há poucos alertas médios e fica aflita quando há algum alto ou crítico, ou cinco ou mais**.
 
 - **Casa:** todos os dispositivos de relance, com os alertas primeiro.
 - **Diário:** as últimas 24 horas de cada dispositivo, hora a hora.
@@ -126,7 +126,11 @@ A migração normaliza os MAC, converte a whitelist em níveis de confiança e b
 
 ## Enviar eventos
 
-Abre um dispositivo, cria a chave de eventos e:
+Abre um dispositivo e carrega em **Ligar à CaraDBela**. O guia cria a chave, dá-te o código para Windows, Linux, routers OpenWrt e GL.iNet, ESP32 ou Home Assistant e confirma quando chega o primeiro evento.
+
+No Windows, o guia instala uma vigia que arranca com a sessão, sem administrador (`public/vigia/windows.ps1`). Regista bloqueios, desbloqueios e sessões remotas. As palavras-passe erradas só entram se a conta puder ler o registo de segurança.
+
+Para qualquer outro equipamento:
 
 ```sh
 curl -X POST http://SERVIDOR:3000/api/receber \

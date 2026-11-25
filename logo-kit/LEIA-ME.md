@@ -10,7 +10,8 @@ Refresh fiel: a mesma cara que pisca o olho, com geometria exata.
 | `caradbela-symbol-*.svg` / `caradbela-symbol-small-*.svg` | Símbolo / abaixo de 48 px |
 | `caradbela-wordmark-*.svg` | Só o nome |
 | `caradbela-selo*.svg`, `caradbela-app-icon.svg` | Sobre cor ou imagem, ícone de app |
-| `caradbela-selo-atenta.svg` | Expressão para alertas na interface. Não é o logo |
+| `caradbela-selo-atenta.svg` | Expressão para poucos alertas médios na interface. Não é o logo |
+| `caradbela-selo-aflita.svg` | Expressão para alertas altos ou muitos alertas na interface. Não é o logo |
 | `variants/` | PNG |
 | `web/` | favicon, ícones, `site.webmanifest`, `head-snippet.html` |
 | `caradbela-guia.html` | Guia de utilização |

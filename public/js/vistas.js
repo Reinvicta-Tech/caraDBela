@@ -1,5 +1,5 @@
-import { azulejo, cara, icone, MAIS, marcasDe, mini, motivo, pecas, rotuloHora, tira, traco } from './azulejo.js';
-import { api, avisar, botao, campo, confirmar, CONFIANCA, dataHora, dialogo, EVENTOS, formulario, h, haQuanto, presente, sev, tabela } from './util.js';
+import { azulejo, cara, humor, icone, MAIS, marcasDe, mini, motivo, pecas, rotuloHora, tira, traco } from './azulejo.js';
+import { api, avisar, botao, campo, confirmar, CONFIANCA, dataHora, dialogo, EVENTOS, formulario, h, haQuanto, presente, sev, tabela, vigia } from './util.js';
 
 const DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const NUMEROS = ['', 'Uma', 'Duas', 'Três', 'Quatro', 'Cinco', 'Seis', 'Sete', 'Oito', 'Nove', 'Dez'];
@@ -27,30 +27,34 @@ function procurarNaRede(recarregar) {
   }, 'cheio', 'A procurar…');
 }
 
-function mostrarChave(chave) {
-  const exemplo = `curl -X POST ${location.origin}/api/receber -H "Authorization: Bearer ${chave}" -H "Content-Type: application/json" -d '{"tipo":"login_falhado","origemIp":"192.168.1.50"}'`;
-  dialogo('Chave de eventos', (fechar) => h('form', null,
-    h('p', null, 'Copia a chave agora: não volta a ser mostrada. O dispositivo usa-a para enviar eventos.'),
-    h('code', { class: 'chave' }, chave), h('p', null, 'Exemplo:'), h('code', { class: 'chave' }, exemplo),
-    h('div', { class: 'acoes' }, h('button', { type: 'button', class: 'botao cheio', onclick: fechar }, 'Já copiei'))));
-}
-
 /* ---------- Casa ---------- */
 
 let escolhido = null; // o azulejo aberto sobrevive às atualizações em direto
+
+// Sem nada a vigiar, a ausência de alertas não quer dizer que está tudo bem.
+const porLigar = (d) => !d.watchedAt && !d.eventAt;
+function falta(d) {
+  const texto = vigia(d) === 'parada' ? `A vigia não dá sinal (último: ${haQuanto(d.watchedAt)}). O dispositivo está desligado ou a vigia foi fechada: entretanto, nada é visto.`
+    : !porLigar(d) ? null
+      : d.hasKey ? 'Este dispositivo tem chave, mas ainda não está a ser vigiado.'
+        : 'Este dispositivo não está ligado à CaraDBela: falhas de palavra-passe e acessos feitos nele não aparecem aqui.';
+  return texto && h('div', { class: 'nota' }, h('p', null, texto), h('a', { class: 'botao cheio', href: `#/ligar?id=${d._id}` }, porLigar(d) ? 'Como ligar' : 'Ver a ligação'));
+}
+const estadoVigia = (d) => (vigia(d) ? `${vigia(d) === 'ativa' ? 'Ativa' : 'Parada'}${d.watchesLogins ? '' : ', sem palavras-passe erradas'}` : null);
 
 function detalhe(p, horas, contagens, ctx, outros) {
   const d = p.d;
   const abrir = p.novo ? h('a', { class: 'botao cheio', href: paginaNovo(p.novo) }, 'Adicionar') : h('a', { class: 'botao', href: `#/dispositivo?id=${d._id}` }, 'Abrir');
   return [
-    cara(p.alertas.length > 0), h('h2', null, p.nome),
+    cara(humor(p.alertas)), h('h2', null, p.nome),
     p.alertas.length ? p.alertas.map((a, i) => h('div', { class: 'aviso' }, h('p', { class: 'fala' }, a.detail || a.title),
       h('p', null, sev(a.severity), h('span', { class: 'suave' }, ` ${haQuanto(a.lastAt)}${a.count > 1 ? `, ${a.count} vezes` : ''}`)),
       h('div', { class: 'acoes' }, botao('Resolver', async () => { await resolver(a); ctx.recarregar(); }, p.novo ? '' : 'cheio'), i === 0 && abrir)))
-      : h('p', { class: 'fala' }, !presente(d) ? `Visto pela última vez: ${haQuanto(d.lastSeenAt)}.` : d.trust === 'desconhecido' ? 'Ainda não disseste se confias neste dispositivo.' : 'Sem nada de estranho.'),
+      : h('p', { class: 'fala' }, !presente(d) ? `Visto pela última vez: ${haQuanto(d.lastSeenAt)}.` : d.trust === 'desconhecido' ? 'Ainda não disseste se confias neste dispositivo.' : porLigar(d) || vigia(d) === 'parada' ? 'Sem alertas.' : 'Sem nada de estranho.'),
     !p.alertas.length && h('div', { class: 'acoes' }, abrir),
+    d && falta(d),
     d && h('div', { class: 'bloco' }, h('h3', null, 'Últimas 24 horas'), tira(horas, contagens, marcasDe(p.alertas, horas)), eixo(horas)),
-    ficha(d ? [['Endereço', d.ip], ['Confiança', CONFIANCA[d.trust || 'desconhecido']], ['Visto', haQuanto(d.lastSeenAt)]] : [['Endereço', p.novo.ip], ['MAC', p.novo.mac]]),
+    ficha(d ? [['Endereço', d.ip], ['Confiança', CONFIANCA[d.trust || 'desconhecido']], ['Visto', haQuanto(d.lastSeenAt)], ['Vigia', estadoVigia(d)]] : [['Endereço', p.novo.ip], ['MAC', p.novo.mac]]),
     outros.length > 0 && h('div', { class: 'bloco outros' }, h('h3', null, 'Também por ver'), outros.slice(0, 4).map((a) => h('a', { href: '#/alertas' }, a.title))),
   ];
 }
@@ -60,7 +64,7 @@ export async function inicio(ctx) {
   const lista = pecas(dispositivos, alertas);
   const n = alertas.length;
   if (!lista.length) {
-    return h('div', { class: 'estreia' }, cara(false), h('h1', null, 'A tua parede está por azulejar'),
+    return h('div', { class: 'estreia' }, cara(), h('h1', null, 'A tua parede está por azulejar'),
       h('p', { class: 'fala' }, 'Procura os equipamentos ligados à rede e guarda os que queres vigiar. Cada um passa a ser um azulejo.'),
       h('div', { class: 'acoes' }, procurarNaRede(ctx.recarregar), h('a', { class: 'botao', href: paginaNovo() }, 'Adicionar à mão')));
   }
@@ -79,9 +83,9 @@ export async function inicio(ctx) {
   abrir(atual);
   return h('div', { class: 'duas' },
     h('section', { class: 'cresce coluna', 'aria-label': 'Dispositivos' },
-      topo(n ? `${NUMEROS[n] || n} ${n === 1 ? 'coisa' : 'coisas'} para veres` : 'Está tudo calmo', procurarNaRede(ctx.recarregar)),
+      topo(n ? `${NUMEROS[n] || n} ${n === 1 ? 'coisa' : 'coisas'} para veres` : dispositivos.every(porLigar) ? 'Sem eventos para vigiar' : 'Está tudo calmo', procurarNaRede(ctx.recarregar)),
       h('div', { class: 'parede' }, botoes,
-        h('div', { class: 'azulejo z-cara', role: 'img', 'aria-label': n ? 'A CaraDBela está atenta' : 'A CaraDBela pisca o olho' }, cara(n > 0)),
+        h('div', { class: 'azulejo z-cara', role: 'img', 'aria-label': { calma: 'A CaraDBela pisca o olho', atenta: 'A CaraDBela está atenta', aflita: 'A CaraDBela está aflita' }[humor(alertas)] }, cara(humor(alertas))),
         h('a', { class: 'azulejo z-mais', href: paginaNovo() }, traco(MAIS), h('strong', null, 'Adicionar à mão'))),
       h('p', { class: 'suave' }, `${dispositivos.filter(presente).length} de ${dispositivos.length} presentes. Com padrão: confiável. Azul vivo: isolado. Sem padrão: por classificar. Desbotado: ausente.`)),
     painel);
@@ -130,13 +134,8 @@ export async function dispositivo(ctx) {
     h('section', { class: 'lado coluna' },
       h('a', { class: 'voltar', href: '#/' }, 'Voltar à casa'),
       h('div', { class: `azulejo grande z-${p.classe}` }, motivo(), icone(d.type), h('h1', null, d.name || 'Novo dispositivo'), h('span', { class: 'estado' }, p.estado)),
-      id && botao('Analisar segurança', async () => { await api('POST', '/analises', { deviceId: id }); ir('#/seguranca'); }, 'cheio'),
-      id && botao(d.hasKey ? 'Substituir chave de eventos' : 'Criar chave de eventos', async () => {
-        if (d.hasKey && !(await confirmar('Substituir a chave?', 'A chave atual deixa de funcionar e o dispositivo precisa da nova.', 'Substituir'))) return;
-        const { chave } = await api('POST', `/dispositivos/${id}/chave`);
-        d.hasKey = true;
-        mostrarChave(chave);
-      })),
+      id && botao('Analisar segurança', async () => { await api('POST', '/analises', { deviceId: id }); ir('#/seguranca'); }, d.hasKey ? 'cheio' : ''),
+      id && h('a', { class: `botao${d.hasKey ? '' : ' cheio'}`, href: `#/ligar?id=${id}` }, d.hasKey ? 'Chave e ligação' : 'Ligar à CaraDBela')),
     h('section', { class: 'cresce coluna' },
       // Resolver não recarrega a página, para não perder o que está a ser escrito.
       p.alertas.map((a) => cartaoAlerta(a, (el) => el.remove(), d.type)),
@@ -160,7 +159,7 @@ export async function alertas(ctx) {
   return h('div', { class: 'coluna media' },
     topo('Alertas', pilulas('Estado', [['#/alertas', 'Por resolver'], ['#/alertas?estado=resolvidos', 'Resolvidos']], resolvidos ? 'Resolvidos' : 'Por resolver')),
     lista.length ? lista.map((a) => cartaoAlerta(a, resolvidos ? null : ctx.recarregar, tipoDe(a) || null))
-      : h('div', { class: 'estreia' }, cara(false), h('h2', null, resolvidos ? 'Ainda não resolveste nenhum alerta' : 'Está tudo calmo'), !resolvidos && h('p', { class: 'fala' }, 'Não há alertas por resolver.')));
+      : h('div', { class: 'estreia' }, cara(), h('h2', null, resolvidos ? 'Ainda não resolveste nenhum alerta' : 'Está tudo calmo'), !resolvidos && h('p', { class: 'fala' }, 'Não há alertas por resolver.')));
 }
 
 /* ---------- Diário ---------- */
@@ -172,7 +171,7 @@ export async function diario(ctx) {
   const lista = pecas(dispositivos, ativos).filter((p) => p.d);
   const total = horas.reduce((n, x) => n + x.total, 0);
   const filtro = h('select', { 'aria-label': 'Tipo de evento', onchange: (e) => ir(`#/diario?tipo=${e.target.value}`) }, opcoes([['', 'Todos os eventos'], ...Object.entries(EVENTOS)], tipo));
-  if (!lista.length) return h('div', { class: 'estreia' }, cara(false), h('h1', null, 'O diário está em branco'), h('p', { class: 'fala' }, 'Guarda primeiro um dispositivo.'), h('a', { class: 'botao cheio', href: '#/' }, 'Ir para a casa'));
+  if (!lista.length) return h('div', { class: 'estreia' }, cara(), h('h1', null, 'O diário está em branco'), h('p', { class: 'fala' }, 'Guarda primeiro um dispositivo.'), h('a', { class: 'botao cheio', href: '#/' }, 'Ir para a casa'));
 
   const painel = h('aside', { class: 'painel lado', 'aria-live': 'polite' });
   let pedido = 0;
@@ -180,11 +179,11 @@ export async function diario(ctx) {
     const meu = ++pedido;
     const eventos = await api('GET', `/eventos?${new URLSearchParams({ dispositivo: p.id, tipo })}`);
     if (meu !== pedido) return;
-    painel.replaceChildren(cara(p.alertas.length > 0), h('h2', null, p.nome), h('p', { class: 'fala' }, p.alertas[0]?.detail || 'Sem alertas por resolver.'),
+    painel.replaceChildren(...[cara(humor(p.alertas)), h('h2', null, p.nome), h('p', { class: 'fala' }, p.alertas[0]?.detail || 'Sem alertas por resolver.'), falta(p.d),
       h('div', { class: 'acoes' }, h('a', { class: 'botao cheio', href: `#/dispositivo?id=${p.id}` }, 'Abrir dispositivo')),
       h('div', { class: 'bloco' }, h('h3', null, 'Últimos eventos'), eventos.length
         ? h('ol', { class: 'eventos', tabindex: 0, 'aria-label': `Eventos de ${p.nome}` }, eventos.map((e) => h('li', null, h('strong', null, EVENTOS[e.kind] || e.kind), h('span', { class: 'suave' }, dataHora(e.at)), (e.sourceIp || e.sourceMac || e.detail) && h('p', null, [e.sourceIp || e.sourceMac, e.detail].filter(Boolean).join(', ')))))
-        : h('p', { class: 'suave' }, 'Nenhum. Os eventos aparecem quando o dispositivo os enviar com a sua chave.')));
+        : h('p', { class: 'suave' }, 'Nenhum. Só aparecem os eventos que o dispositivo enviar com a sua chave.'))].filter(Boolean));
   }
   const atual = lista.find((p) => p.id === escolhido) || lista[0];
   const linhas = lista.map((p) => h('button', {
@@ -221,7 +220,7 @@ function resultado(a) {
 export async function seguranca(ctx) {
   const [meus, analises] = await Promise.all([api('GET', '/dispositivos'), api('GET', '/analises')]);
   return h('div', { class: 'coluna media' }, topo('Segurança'),
-    h('section', { class: 'painel cartao' }, cara(false),
+    h('section', { class: 'painel cartao' }, cara(),
       h('div', { class: 'cresce coluna' }, h('h2', null, 'Que portas estão abertas?'), h('p', null, 'Escolhe um dispositivo e a CaraDBela vê que serviços ele mostra à rede.'),
         meus.length ? formulario({
           campos: campo('Dispositivo', h('select', { name: 'deviceId' }, opcoes(meus.map((d) => [d._id, `${d.name} (${d.ip})`])))),

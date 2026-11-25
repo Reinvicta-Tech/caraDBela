@@ -143,6 +143,28 @@ div.azulejo { cursor: default; }
 .sev-critica, .sev-alta { color: var(--vermelho); } .sev-media { color: var(--ocre); } .sev-baixa { color: var(--verde); }
 .vazio { padding: .5rem 0; }
 
+/* Guia para ligar um dispositivo */
+.passos { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; }
+.passo { display: flex; gap: 1.25rem; align-items: flex-start; }
+.num { flex: none; width: 3rem; height: 3rem; border-radius: .8rem; display: grid; place-items: center; background: #2672d6; color: #fff; font-weight: 900; font-size: 1.5rem; }
+.passo h2 { min-height: 3rem; display: flex; align-items: center; }
+.tipos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(8rem, 100%), 1fr)); gap: .6rem; }
+.tipos a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; min-height: 8rem; padding: .8rem; border-radius: 1rem; background: var(--z-conf); color: var(--tinta); text-align: center; text-decoration: none; line-height: 1.15; font-weight: 500; }
+.tipos a:hover { background: var(--parede); }
+.tipos a[aria-current] { background: #2672d6; color: #fff; font-weight: 800; }
+.faz { margin: 0; padding-left: 1.4rem; display: grid; gap: .4rem; }
+.copia { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; justify-items: start; }
+.copia pre { margin: 0; width: 100%; max-height: 22rem; overflow: auto; padding: 1rem; border-radius: .9rem; background: var(--chao); line-height: 1.45; }
+.copia code { overflow-wrap: normal; white-space: pre; }
+.nota { align-self: stretch; display: grid; gap: .7rem; justify-items: start; padding: 1rem 1.2rem; border-radius: 1rem; background: #ffe3a6; color: #0d2450; }
+.nota .botao.cheio { border-color: #1c5fc4; background: #1c5fc4; color: #fff; }
+.chegou { display: flex; align-items: center; gap: 1.2rem; }
+summary { cursor: pointer; padding: .6rem 0; font-weight: 500; }
+
+.tipos small { font-size: .95rem; font-weight: 400; opacity: .85; }
+.dura { padding: 1rem 1.2rem; border-radius: 1rem; background: var(--parede); max-width: 68ch; }
+details > .coluna { padding-bottom: .8rem; }
+
 /* Vinte e quatro horas */
 .tira { display: flex; gap: 3px; width: 100%; }
 .tira span { flex: 1; height: 2.2rem; border-radius: 4px; }
@@ -212,6 +234,9 @@ dialog > .acoes { margin-top: 1.2rem; }
   .duas > .painel.lado > * { grid-column: 2; }
   .duas > .painel.lado > .cara { grid-column: 1; grid-row: 1 / span 3; width: 5.75rem; }
   .duas > .painel.lado > :is(.bloco, .ficha) { grid-column: 1 / -1; }
+  .duas > .painel.lado > .nota { grid-column: 1 / -1; }
+  .passo { flex-direction: column; gap: .8rem; }
+  .passo > .cresce { align-self: stretch; flex: none; }
   .painel.lado h2 { font-size: 1.8rem; }
   .fala { font-size: 1.15rem; }
   .porto { grid-template-columns: 1fr; grid-template-rows: 14rem 1fr; padding: .9rem; }
